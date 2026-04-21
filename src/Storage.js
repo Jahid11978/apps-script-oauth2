@@ -61,7 +61,8 @@ Storage_.prototype.getValue = function(key, optSkipMemoryCheck) {
 
   if (!optSkipMemoryCheck) {
     // Check in-memory cache.
-    if (value = this.memory_[prefixedKey]) {
+    if (Object.prototype.hasOwnProperty.call(this.memory_, prefixedKey)) {
+      value = this.memory_[prefixedKey];
       if (value === Storage_.CACHE_NULL_VALUE) {
         return null;
       }
@@ -130,7 +131,6 @@ Storage_.prototype.removeValue = function(key) {
 
 /**
  * Resets the storage, removing all stored data.
- * @param {string} key The key.
  */
 Storage_.prototype.reset = function() {
   var prefix = this.getPrefixedKey_();

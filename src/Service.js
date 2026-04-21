@@ -201,7 +201,7 @@ Service_.prototype.setCallbackFunction = function(callbackFunctionName) {
  * Sets the client ID to use for the OAuth flow (required). You can create
  * client IDs in the "Credentials" section of a Google Developers Console
  * project. Although you can use any project with this library, it may be
- * convinient to use the project that was created for your script. These
+ * convenient to use the project that was created for your script. These
  * projects are not visible if you visit the console directly, but you can
  * access it by click on the menu item "Resources > Advanced Google services" in
  * the Script Editor, and then click on the link "Google Developers Console" in
