@@ -168,6 +168,17 @@ describe('Service', () => {
       assert.deepEqual(service.getToken(true), newToken);
     });
 
+    it('should return falsy token values from local memory cache', () => {
+      var cache = new MockCache();
+      var properties = new MockProperties();
+      var service = OAuth2.createService('test')
+          .setPropertyStore(properties)
+          .setCache(cache);
+      service.getStorage().setValue(null, false);
+
+      assert.strictEqual(service.getToken(), false);
+    });
+
     it('should load null tokens from the cache', () => {
       var cache = new MockCache();
       var properties = new MockProperties();
@@ -916,4 +927,3 @@ function extractStateTokenFromUrl(authorizationUrl) {
   var state = JSON.parse(params.state);
   return state;
 }
-
