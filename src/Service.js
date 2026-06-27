@@ -126,12 +126,22 @@ Service_.prototype.setTokenMethod = function(tokenMethod) {
  * @param {string} codeVerifier A random challenge string
  * @return {!Service_} This service, for chaining
  */
-Service_.prototype.setCodeVerififer = function(codeVerifier) {
+Service_.prototype.setCodeVerifier = function(codeVerifier) {
   this.codeVerifier_ = codeVerifier;
   if (!this.codeChallengeMethod_) {
     this.codeChallengeMethod_ = 'S256';
   }
   return this;
+};
+
+/**
+ * Set the code verifier used for PKCE.
+ * @param {string} codeVerifier A random challenge string
+ * @return {!Service_} This service, for chaining
+ * @deprecated Use setCodeVerifier().
+ */
+Service_.prototype.setCodeVerififer = function(codeVerifier) {
+  return this.setCodeVerifier(codeVerifier);
 };
 
 /**
@@ -145,7 +155,7 @@ Service_.prototype.generateCodeVerifier = function() {
     rawBytes[i] = r;
   }
   const verifier = encodeUrlSafeBase64NoPadding_(rawBytes);
-  return this.setCodeVerififer(verifier);
+  return this.setCodeVerifier(verifier);
 };
 
 /**

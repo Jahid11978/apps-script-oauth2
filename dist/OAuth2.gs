@@ -219,12 +219,22 @@ Service_.prototype.setTokenMethod = function(tokenMethod) {
  * @param {string} codeVerifier A random challenge string
  * @return {!Service_} This service, for chaining
  */
-Service_.prototype.setCodeVerififer = function(codeVerifier) {
+Service_.prototype.setCodeVerifier = function(codeVerifier) {
   this.codeVerifier_ = codeVerifier;
   if (!this.codeChallengeMethod_) {
     this.codeChallengeMethod_ = 'S256';
   }
   return this;
+};
+
+/**
+ * Set the code verifier used for PKCE.
+ * @param {string} codeVerifier A random challenge string
+ * @return {!Service_} This service, for chaining
+ * @deprecated Use setCodeVerifier().
+ */
+Service_.prototype.setCodeVerififer = function(codeVerifier) {
+  return this.setCodeVerifier(codeVerifier);
 };
 
 /**
@@ -238,7 +248,7 @@ Service_.prototype.generateCodeVerifier = function() {
     rawBytes[i] = r;
   }
   const verifier = encodeUrlSafeBase64NoPadding_(rawBytes);
-  return this.setCodeVerififer(verifier);
+  return this.setCodeVerifier(verifier);
 };
 
 /**
@@ -294,7 +304,7 @@ Service_.prototype.setCallbackFunction = function(callbackFunctionName) {
  * Sets the client ID to use for the OAuth flow (required). You can create
  * client IDs in the "Credentials" section of a Google Developers Console
  * project. Although you can use any project with this library, it may be
- * convinient to use the project that was created for your script. These
+ * convenient to use the project that was created for your script. These
  * projects are not visible if you visit the console directly, but you can
  * access it by click on the menu item "Resources > Advanced Google services" in
  * the Script Editor, and then click on the link "Google Developers Console" in
@@ -1047,7 +1057,8 @@ Storage_.prototype.getValue = function(key, optSkipMemoryCheck) {
 
   if (!optSkipMemoryCheck) {
     // Check in-memory cache.
-    if (value = this.memory_[prefixedKey]) {
+    if (Object.prototype.hasOwnProperty.call(this.memory_, prefixedKey)) {
+      value = this.memory_[prefixedKey];
       if (value === Storage_.CACHE_NULL_VALUE) {
         return null;
       }
@@ -1116,7 +1127,6 @@ Storage_.prototype.removeValue = function(key) {
 
 /**
  * Resets the storage, removing all stored data.
- * @param {string} key The key.
  */
 Storage_.prototype.reset = function() {
   var prefix = this.getPrefixedKey_();

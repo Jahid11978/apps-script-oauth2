@@ -174,9 +174,12 @@ describe('Service', () => {
       var service = OAuth2.createService('test')
           .setPropertyStore(properties)
           .setCache(cache);
-      service.getStorage().setValue(null, false);
+      var falsyValues = [false, 0, ''];
+      for (var i = 0; i < falsyValues.length; ++i) {
+        service.getStorage().setValue(null, falsyValues[i]);
 
-      assert.strictEqual(service.getToken(), false);
+        assert.strictEqual(service.getToken(), falsyValues[i]);
+      }
     });
 
     it('should load null tokens from the cache', () => {
@@ -556,8 +559,27 @@ describe('Service', () => {
       assert.include(authorizationUrl, 'code_challenge_method=S256');
     });
 
+    it('should support setCodeVerifier and keep setCodeVerififer alias', () => {
+      var serviceWithCorrectSpelling = OAuth2.createService('test')
+          .setAuthorizationBaseUrl('http://www.example.com')
+          .setClientId('abc')
+          .setCallbackFunction('authCallback')
+          .setCodeVerifier('verifier-1');
+      var urlWithCorrectSpelling =
+          serviceWithCorrectSpelling.getAuthorizationUrl({});
+      assert.include(urlWithCorrectSpelling, 'code_challenge');
 
-    it('should use supply verifier when exchanging code', () => {
+      var serviceWithAlias = OAuth2.createService('test')
+          .setAuthorizationBaseUrl('http://www.example.com')
+          .setClientId('abc')
+          .setCallbackFunction('authCallback')
+          .setCodeVerififer('verifier-2');
+      var urlWithAlias = serviceWithAlias.getAuthorizationUrl({});
+      assert.include(urlWithAlias, 'code_challenge');
+    });
+
+
+    it('should use supplied verifier when exchanging code', () => {
       var service = OAuth2.createService('test')
           .setAuthorizationBaseUrl('http://www.example.com')
           .setTokenUrl('http://www.example.com/token')
@@ -886,7 +908,7 @@ describe('Utilities', () => {
   });
 
   describe('#setTokenMethod()', () => {
-    it('should defautl to POST', (done) => {
+    it('should default to POST', (done) => {
       mocks.UrlFetchApp.resultFunction = (url, urlOptions) => {
         assert.equal(urlOptions.method, 'post');
         done();
